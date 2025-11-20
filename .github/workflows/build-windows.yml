@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 16
 
       - name: Install dependencies
         run: npm ci
@@ -23,22 +23,8 @@ jobs:
       - name: Create dist folder
         run: mkdir dist
 
-      - name: Prefetch pkg base binaries
-        shell: pwsh
-        env:
-          PKG_CACHE_PATH: "${{ runner.temp }}\\pkg-cache"
-        run: |
-          echo Using PKG_CACHE_PATH=$env:PKG_CACHE_PATH
-          npx --yes pkg-fetch@latest node18-win-x64
-          npx --yes pkg-fetch@latest node18-win-arm64
-
-      - name: Build exe with local pkg
-        shell: pwsh
-        env:
-          PKG_CACHE_PATH: "${{ runner.temp }}\\pkg-cache"
-        run: |
-          echo Using PKG_CACHE_PATH=$env:PKG_CACHE_PATH
-          .\node_modules\.bin\pkg .
+      - name: Build exe
+        run: npx @yao-pkg/pkg .
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
