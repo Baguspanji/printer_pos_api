@@ -23,13 +23,22 @@ jobs:
       - name: Create dist folder
         run: mkdir dist
 
-      - name: Build exe with pkg (npx, pinned)
-        shell: cmd
+      - name: Prefetch pkg base binaries
+        shell: pwsh
         env:
           PKG_CACHE_PATH: "${{ runner.temp }}\\pkg-cache"
         run: |
-          echo Using PKG_CACHE_PATH=%PKG_CACHE_PATH%
-          npx --yes pkg@5.8.1 .
+          echo Using PKG_CACHE_PATH=$env:PKG_CACHE_PATH
+          npx --yes @vercel/pkg-fetch@3.6.0 node18-win-x64
+          npx --yes @vercel/pkg-fetch@3.6.0 node18-win-arm64
+
+      - name: Build exe with local pkg
+        shell: pwsh
+        env:
+          PKG_CACHE_PATH: "${{ runner.temp }}\\pkg-cache"
+        run: |
+          echo Using PKG_CACHE_PATH=$env:PKG_CACHE_PATH
+          .\node_modules\.bin\pkg .
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
