@@ -7,19 +7,23 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build-win": "pkg . --targets node18-win-x64,node18-win-arm64",
-    "build-mac": "pkg . --targets node18-macos-x64,node18-macos-arm64",
-    "build-linux": "pkg . --targets node18-linux-x64"
+    "build-win": "pkg ."
   },
   "bin": {
     "printer_pos": "./index.js"
   },
   "pkg": {
-    "scripts": [
-      "index.js",
-      "views/printer-status.html"
+    "scripts": "index.js",
+    "assets": [
+      "views/**/*",
+      "node_modules/node-printer/printer.js",
+      "node_modules/node-printer/job.js"
     ],
-    "output": "dist/printer_pos.exe"
+    "targets": [
+      "node18-win-x64",
+      "node18-win-arm64"
+    ],
+    "outputPath": "dist"
   },
   "keywords": [],
   "author": "",

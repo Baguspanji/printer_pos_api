@@ -5,9 +5,6 @@ pnpm-lock.yaml
 # Settings file (contains local printer configuration)
 printer-settings.json
 
-# Backup files
-index-old.js
-
 # Logs
 logs/
 *.log
@@ -20,3 +17,6 @@ Thumbs.db
 # Environment files
 .env
 .env.local
+
+# Build output
+dist/
