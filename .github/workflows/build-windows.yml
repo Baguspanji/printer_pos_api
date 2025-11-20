@@ -15,13 +15,31 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 16  # ← Ubah ke 16 untuk match dengan target
+          node-version: 18
+
+      - name: Cache pkg binaries
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}\pkg-cache
+          key: pkg-cache-${{ runner.os }}-node18
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Create dist folder
+        run: mkdir dist
+
+      - name: Prefetch pkg base binaries
+        shell: pwsh
+        env:
+          PKG_CACHE_PATH: "${{ runner.temp }}\\pkg-cache"
+        run: |
+          echo Using PKG_CACHE_PATH=$env:PKG_CACHE_PATH
+          npx --yes pkg-fetch@latest node18-win-x64
       - name: Build exe
-        run: npx @yao-pkg/pkg .  # ← Gunakan npx langsung dengan @yao-pkg/pkg
+        env:
+          PKG_CACHE_PATH: "${{ runner.temp }}\\pkg-cache"
+        run: npx @yao-pkg/pkg .
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
