@@ -1,40 +1,94 @@
 # Printer POS API
 
-Server middleware untuk mengirim data print ke printer POS menggunakan ESC/POS commands.
+Server middleware untuk mengirim data print ke printer POS menggunakan ESC/POS commands. Aplikasi ini menyediakan REST API untuk mencetak struk pembelian ke printer thermal POS.
+
+## Fitur
+
+- 🖨️ Print struk ke printer thermal POS
+- 🔧 Konfigurasi printer via API atau Web Interface
+- 📝 Pengaturan informasi toko (nama, alamat, footer)
+- 💾 Auto-save settings ke file JSON
+- 🌐 Web UI untuk monitoring dan konfigurasi
+- 📦 Build executable untuk distribusi tanpa Node.js
+- 🔄 Support CORS untuk integrasi frontend
+- ✅ Health check endpoint
+- 🪵 Logging sistem dengan rotating files
 
 ## Struktur Folder
 
 ```
 printer_pos/
 ├── index.js                          # File utama server
-├── printer-status.html               # Halaman web untuk status printer
+├── package.json                      # Dependencies dan scripts
 ├── printer-settings.json             # File konfigurasi (auto-generated)
 ├── printer-settings.example.json     # Contoh file konfigurasi
-├── utils/
-│   ├── settings.js                   # Module untuk manage settings
-│   ├── printer.js                    # Module untuk komunikasi printer
-│   └── escpos.js                     # Module untuk generate ESC/POS commands
-├── package.json
-└── README.md
+├── example-purchase.json             # Contoh data pembelian
+├── controllers/                      # Business logic controllers
+│   ├── printController.js            # Handle print operations
+│   ├── printerController.js          # Handle printer management
+│   └── settingsController.js         # Handle settings operations
+├── routes/                           # API route definitions
+│   ├── printRoutes.js                # Print endpoints
+│   ├── printerRoutes.js              # Printer endpoints
+│   └── settingsRoutes.js             # Settings endpoints
+├── utils/                            # Utility modules
+│   ├── escpos.js                     # Generate ESC/POS commands
+│   ├── logger.js                     # Logging utility
+│   ├── printer.js                    # Printer communication
+│   ├── settings.js                   # Settings management
+│   └── validator.js                  # Input validation
+├── views/                            # Frontend files
+│   └── printer-status.html           # Web UI untuk status printer
+└── logs/                             # Application logs (auto-generated)
 ```
 
 ## Instalasi
 
+### Development Mode
+
 ```bash
+# Install dependencies
 npm install
 # atau
 pnpm install
-```
 
-## Menjalankan Server
-
-```bash
+# Jalankan server
 npm start
 # atau untuk development dengan auto-reload
 npm run dev
 ```
 
 Server akan berjalan di `http://127.0.0.1:3000`
+
+### Production Mode (Executable)
+
+Build executable untuk distribusi tanpa perlu install Node.js:
+
+```bash
+# Build untuk Windows (x64 dan ARM64)
+npm run build-win
+
+# Build untuk macOS (x64 dan ARM64)
+npm run build-mac
+
+# Build untuk Linux (x64)
+npm run build-linux
+```
+
+Hasil build akan tersimpan di folder root dengan nama:
+- `printer_pos-x64` (Intel/AMD)
+- `printer_pos-arm64` (Apple Silicon/ARM)
+
+Jalankan executable:
+```bash
+# macOS/Linux
+./printer_pos-x64
+# atau
+./printer_pos-arm64
+
+# Windows
+printer_pos-x64.exe
+```
 
 ## Konfigurasi
 
@@ -285,19 +339,83 @@ fetch('http://127.0.0.1:3000/settings/store', {
 ## Troubleshooting
 
 ### Printer tidak ditemukan
+
 - Pastikan printer sudah terinstall dan aktif di sistem
 - Cek nama printer di sistem operasi Anda
 - Gunakan endpoint `/printer/status` untuk melihat daftar printer tersedia
 
 ### Gagal mencetak
+
 - Pastikan printer sudah dipilih menggunakan `/printer/set`
 - Coba jalankan test print dengan `/printer/test`
 - Periksa log server untuk detail error
+- Cek file log di folder `logs/` untuk informasi lebih detail
 
 ### Settings tidak tersimpan
+
 - Pastikan aplikasi memiliki permission untuk write file
 - Cek apakah file `printer-settings.json` ada dan readable
+- Verifikasi format JSON pada file settings
+
+### Executable tidak berjalan
+
+- Pastikan file memiliki execute permission (macOS/Linux): `chmod +x printer_pos-x64`
+- Di macOS, jika ada peringatan security, buka System Preferences > Security & Privacy
+- Di Windows, allow permission jika ada Windows Defender warning
+
+## Development
+
+### Project Structure
+
+Aplikasi ini dibangun dengan arsitektur MVC (Model-View-Controller):
+
+- **Controllers**: Berisi business logic untuk setiap fitur
+- **Routes**: Definisi endpoint API dan routing
+- **Utils**: Fungsi utility yang dapat digunakan kembali
+- **Views**: Frontend HTML untuk web interface
+
+### Logging
+
+Log disimpan di folder `logs/` dengan format:
+- `app.log`: Log aplikasi umum
+- Log file di-rotate otomatis untuk mencegah file terlalu besar
+
+### Adding New Features
+
+1. Buat controller baru di folder `controllers/`
+2. Definisikan routes di folder `routes/`
+3. Register routes di `index.js`
+4. Update dokumentasi API di README
+
+## Technologies Used
+
+- **Express.js**: Web framework
+- **node-printer**: Native printer module untuk komunikasi dengan printer
+- **CORS**: Enable cross-origin requests
+- **pkg**: Package Node.js app menjadi executable
+
+## Requirements
+
+- Node.js 18 atau lebih tinggi (untuk development)
+- Printer thermal POS yang support ESC/POS commands
+- Port 3000 harus tersedia
+
+## Contributing
+
+1. Fork repository ini
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
 ## License
 
 ISC
+
+## Author
+
+Baguspanji
+
+## Support
+
+Untuk pertanyaan atau dukungan, silakan buka issue di repository GitHub.
