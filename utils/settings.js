@@ -1,7 +1,20 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-const SETTINGS_FILE = path.join(__dirname, '..', 'printer-settings.json');
+// Gunakan direktori yang writable untuk packaged app
+let SETTINGS_FILE;
+if (process.pkg) {
+    // Packaged app - gunakan user home directory
+    const configDir = path.join(os.homedir(), '.printer_pos');
+    if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+    }
+    SETTINGS_FILE = path.join(configDir, 'printer-settings.json');
+} else {
+    // Development mode
+    SETTINGS_FILE = path.join(__dirname, '..', 'printer-settings.json');
+}
 
 // Default settings
 let settings = {

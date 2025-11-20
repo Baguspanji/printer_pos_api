@@ -1,7 +1,19 @@
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
-const LOG_DIR = path.join(__dirname, '..', 'logs');
+// Gunakan direktori yang writable untuk packaged app
+// Jika running dari snapshot (pkg), gunakan temp/home directory
+// Jika development mode, gunakan logs folder di project
+let LOG_DIR;
+if (process.pkg) {
+    // Packaged app - gunakan user home directory
+    LOG_DIR = path.join(os.homedir(), '.printer_pos', 'logs');
+} else {
+    // Development mode
+    LOG_DIR = path.join(__dirname, '..', 'logs');
+}
+
 const LOG_FILE = path.join(LOG_DIR, `printer-${new Date().toISOString().split('T')[0]}.log`);
 
 // Buat direktori logs jika belum ada
