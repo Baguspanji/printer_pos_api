@@ -25,7 +25,7 @@ jobs:
       - name: Build macOS binaries
         run: |
           npm install -g @yao-pkg/pkg
-          pkg . --targets node18-macos-x64,node18-macos-arm64 --output dist/macos
+          pkg . --targets node18-macos-x64,node18-macos-arm64 --out-dir dist/macos
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
