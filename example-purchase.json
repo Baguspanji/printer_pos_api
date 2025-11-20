@@ -1,0 +1,68 @@
+{
+    "transaction_id": "TX-20251120-001",
+    "cashier": "Budi Santoso",
+    "items": [
+        {
+            "name": "Indomie Goreng",
+            "qty": 5,
+            "price": 3500
+        },
+        {
+            "name": "Aqua Botol 600ml",
+            "qty": 3,
+            "price": 4000
+        },
+        {
+            "name": "Susu Ultra Milk 1L",
+            "qty": 2,
+            "price": 18000
+        },
+        {
+            "name": "Roti Tawar Sari Roti",
+            "qty": 1,
+            "price": 15000
+        },
+        {
+            "name": "Telur Ayam 1kg",
+            "qty": 1,
+            "price": 28000
+        },
+        {
+            "name": "Minyak Goreng Bimoli 2L",
+            "qty": 1,
+            "price": 35000
+        },
+        {
+            "name": "Gula Pasir 1kg",
+            "qty": 2,
+            "price": 15000
+        },
+        {
+            "name": "Beras Premium 5kg",
+            "qty": 1,
+            "price": 75000
+        },
+        {
+            "name": "Sabun Mandi Lifebuoy",
+            "qty": 3,
+            "price": 8500
+        },
+        {
+            "name": "Shampo Pantene 170ml",
+            "qty": 2,
+            "price": 22000
+        },
+        {
+            "name": "Pasta Gigi Pepsodent",
+            "qty": 2,
+            "price": 12000
+        },
+        {
+            "name": "Tisu Paseo 250 sheet",
+            "qty": 1,
+            "price": 18000
+        }
+    ],
+    "payment_method": "CASH",
+    "payment_amount": 500000
+}

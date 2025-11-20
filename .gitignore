@@ -1,0 +1,22 @@
+# Node modules
+node_modules/
+pnpm-lock.yaml
+
+# Settings file (contains local printer configuration)
+printer-settings.json
+
+# Backup files
+index-old.js
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local

@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Printer POS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #D9E9CF 0%, #F0F0F0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1400px;
+            width: 100%;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #9CA986 0%, #B5C99A 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .left-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-section {
+            display: flex;
+            flex-direction: column;
+            background: #f5f9f0;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #D9E9CF;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #6c757d;
+        }
+
+        .status-card.connected {
+            background: #d1fae5;
+            border-left-color: #10b981;
+        }
+
+        .status-card.disconnected {
+            background: #fee2e2;
+            border-left-color: #ef4444;
+        }
+
+        .status-card.not-set {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .status-title {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #212529;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        .status-icon.green {
+            background: #10b981;
+        }
+
+        .status-icon.red {
+            background: #ef4444;
+        }
+
+        .status-icon.yellow {
+            background: #f59e0b;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .printer-selection {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #9CA986;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #9CA986;
+        }
+
+        select:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #9CA986 0%, #B5C99A 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(156, 169, 134, 0.4);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-refresh {
+            background: #64748b;
+            margin-top: 10px;
+        }
+
+        .btn-refresh:hover:not(:disabled) {
+            box-shadow: 0 5px 15px rgba(100, 116, 139, 0.4);
+        }
+
+        .btn-test {
+            background: #10b981;
+        }
+
+        .btn-test:hover:not(:disabled) {
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-save-store {
+            background: linear-gradient(135deg, #87986A 0%, #9CA986 100%);
+        }
+
+        .btn-save-store:hover:not(:disabled) {
+            box-shadow: 0 5px 15px rgba(135, 152, 106, 0.4);
+        }
+
+        .printer-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .printer-item {
+            padding: 10px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .printer-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .printer-name {
+            font-weight: 500;
+        }
+
+        .badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            color: #5a6b4a;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-text {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #9CA986;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖨️ Status Printer POS</h1>
+            <p>Monitor dan kelola koneksi printer Anda</p>
+        </div>
+
+        <div class="content">
+            <!-- Left Section - Printer -->
+            <div class="left-section">
+                <div id="alertContainer"></div>
+
+                <!-- Status Koneksi -->
+                <div id="statusCard" class="status-card not-set">
+                    <div class="status-title">Status Koneksi</div>
+                    <div class="status-value">
+                        <span class="status-icon yellow"></span>
+                        <span id="statusText">Memuat...</span>
+                    </div>
+                </div>
+
+                <!-- Printer Terpilih -->
+                <div class="status-card">
+                    <div class="status-title">Printer Aktif</div>
+                    <div class="status-value" style="font-size: 18px;">
+                        <span id="currentPrinter">-</span>
+                    </div>
+                </div>
+
+                <!-- Form Pilih Printer -->
+                <div class="printer-selection">
+                    <div class="form-group">
+                        <label for="printerSelect">Pilih Printer:</label>
+                        <select id="printerSelect" disabled>
+                            <option value="">Memuat daftar printer...</option>
+                        </select>
+                    </div>
+
+                    <button id="setPrinterBtn" class="btn" disabled>
+                        Atur Printer
+                    </button>
+
+                    <button id="refreshBtn" class="btn btn-refresh">
+                        🔄 Refresh Status
+                    </button>
+
+                    <button id="testPrintBtn" class="btn btn-refresh" style="background: #10b981; margin-top: 10px;" disabled>
+                        🖨️ Test Print
+                    </button>
+                </div>
+
+                <!-- Daftar Printer Tersedia -->
+                <div id="printerListContainer" style="display: none;">
+                    <div class="status-title" style="margin-top: 20px; margin-bottom: 10px;">
+                        Printer Tersedia
+                    </div>
+                    <div id="printerList" class="printer-list"></div>
+                </div>
+
+                <p class="info-text">
+                    Platform: <strong id="platformInfo">-</strong>
+                </p>
+            </div>
+
+            <!-- Right Section - Store Settings -->
+            <div class="right-section">
+                <h3 class="section-title">⚙️ Pengaturan Toko</h3>
+                
+                <div class="form-group">
+                    <label for="storeName">Nama Toko:</label>
+                    <input type="text" id="storeName" placeholder="Nama Toko" maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="storeAddress">Alamat:</label>
+                    <input type="text" id="storeAddress" placeholder="Alamat Toko" maxlength="200">
+                </div>
+
+                <div class="form-group">
+                    <label for="storePhone">Nomor Telepon:</label>
+                    <input type="text" id="storePhone" placeholder="08123456789" maxlength="20">
+                </div>
+
+                <div class="form-group">
+                    <label for="storeFooter">Footer (Pesan Penutup):</label>
+                    <input type="text" id="storeFooter" placeholder="Footer Struk" maxlength="200">
+                </div>
+
+                <div class="form-group">
+                    <label for="paperSize">Ukuran Kertas:</label>
+                    <select id="paperSize">
+                        <option value="58mm">58mm (Thermal Kecil)</option>
+                        <option value="80mm">80mm (Thermal Standar)</option>
+                    </select>
+                    <div style="margin-top: 8px; font-size: 13px; color: #5a6b4a;">
+                        ℹ️ Pilih ukuran kertas sesuai dengan printer thermal Anda
+                    </div>
+                </div>
+
+                <button id="saveStoreBtn" class="btn btn-save-store">
+                    💾 Simpan Pengaturan Toko
+                </button>
+
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button id="backupBtn" class="btn btn-refresh" style="flex: 1;">
+                        📥 Backup
+                    </button>
+                    <button id="restoreBtn" class="btn btn-refresh" style="flex: 1;">
+                        📤 Restore
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="restoreFileInput" accept=".json" style="display: none;">
+
+    <script>
+        let printers = [];
+        let currentPrinter = null;
+
+        // Fungsi untuk menampilkan alert
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.style.opacity = '0';
+                alertDiv.style.transition = 'opacity 0.5s';
+                setTimeout(() => alertDiv.remove(), 500);
+            }, 5000);
+        }
+
+        // Fungsi untuk load store settings
+        async function loadStoreSettings() {
+            try {
+                const response = await fetch('/settings/store');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    document.getElementById('storeName').value = data.data.store_name || '';
+                    document.getElementById('storeAddress').value = data.data.store_address || '';
+                    document.getElementById('storePhone').value = data.data.store_phone || '';
+                    document.getElementById('storeFooter').value = data.data.store_footer || '';
+                    document.getElementById('paperSize').value = data.data.paper_size || '58mm';
+                }
+            } catch (error) {
+                console.error('Error loading store settings:', error);
+            }
+        }
+
+        // Fungsi untuk load status printer
+        async function loadPrinterStatus() {
+            try {
+                const response = await fetch('/printer/status');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    printers = data.available_printers || [];
+                    currentPrinter = data.configured_printer;
+                    
+                    // Update status card
+                    const statusCard = document.getElementById('statusCard');
+                    const statusText = document.getElementById('statusText');
+                    const statusIcon = statusCard.querySelector('.status-icon');
+                    
+                    if (!data.is_configured) {
+                        statusCard.className = 'status-card not-set';
+                        statusText.textContent = 'Printer Belum Diatur';
+                        statusIcon.className = 'status-icon yellow';
+                    } else if (data.printer_found) {
+                        statusCard.className = 'status-card connected';
+                        statusText.textContent = 'Terhubung';
+                        statusIcon.className = 'status-icon green';
+                    } else {
+                        statusCard.className = 'status-card disconnected';
+                        statusText.textContent = 'Tidak Terhubung';
+                        statusIcon.className = 'status-icon red';
+                    }
+
+                    // Update current printer
+                    document.getElementById('currentPrinter').textContent = 
+                        currentPrinter || 'Belum diatur';
+
+                    // Update platform info
+                    document.getElementById('platformInfo').textContent = data.platform;
+
+                    // Update printer select
+                    const printerSelect = document.getElementById('printerSelect');
+                    printerSelect.innerHTML = '';
+                    
+                    if (printers.length === 0) {
+                        printerSelect.innerHTML = '<option value="">Tidak ada printer tersedia</option>';
+                        printerSelect.disabled = true;
+                        document.getElementById('setPrinterBtn').disabled = true;
+                    } else {
+                        printerSelect.innerHTML = '<option value="">-- Pilih Printer --</option>';
+                        printers.forEach(printer => {
+                            const option = document.createElement('option');
+                            option.value = printer.name;
+                            option.textContent = printer.name;
+                            if (printer.is_selected) {
+                                option.selected = true;
+                            }
+                            printerSelect.appendChild(option);
+                        });
+                        printerSelect.disabled = false;
+                        document.getElementById('setPrinterBtn').disabled = false;
+                    }
+
+                    // Enable/disable test print button
+                    document.getElementById('testPrintBtn').disabled = !data.is_configured;
+
+                    // Update printer list
+                    updatePrinterList();
+                } else {
+                    throw new Error(data.message || 'Gagal memuat status printer');
+                }
+            } catch (error) {
+                console.error('Error loading printer status:', error);
+                showAlert('Gagal memuat status printer: ' + error.message, 'error');
+            }
+        }
+
+        // Fungsi untuk update daftar printer
+        function updatePrinterList() {
+            const printerListContainer = document.getElementById('printerListContainer');
+            const printerList = document.getElementById('printerList');
+
+            if (printers.length === 0) {
+                printerListContainer.style.display = 'none';
+                return;
+            }
+
+            printerListContainer.style.display = 'block';
+            printerList.innerHTML = '';
+
+            printers.forEach(printer => {
+                const item = document.createElement('div');
+                item.className = 'printer-item';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'printer-name';
+                nameSpan.textContent = printer.name;
+                
+                item.appendChild(nameSpan);
+
+                if (printer.is_selected) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge';
+                    badge.textContent = 'Aktif';
+                    item.appendChild(badge);
+                }
+
+                printerList.appendChild(item);
+            });
+        }
+
+        // Fungsi untuk set printer
+        async function setPrinter() {
+            const printerSelect = document.getElementById('printerSelect');
+            const selectedPrinter = printerSelect.value;
+
+            if (!selectedPrinter) {
+                showAlert('Silakan pilih printer terlebih dahulu', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/printer/set', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        printer_name: selectedPrinter
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    showAlert(data.message, 'success');
+                    await loadPrinterStatus();
+                } else {
+                    throw new Error(data.message || 'Gagal mengatur printer');
+                }
+            } catch (error) {
+                console.error('Error setting printer:', error);
+                showAlert('Gagal mengatur printer: ' + error.message, 'error');
+            }
+        }
+
+        // Fungsi untuk test print
+        async function testPrint() {
+            const testBtn = document.getElementById('testPrintBtn');
+            
+            if (!currentPrinter) {
+                showAlert('Silakan pilih printer terlebih dahulu', 'error');
+                return;
+            }
+
+            // Disable button saat printing
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Mencetak...';
+
+            try {
+                const response = await fetch('/printer/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    showAlert('✅ Test print berhasil dikirim ke printer!', 'success');
+                } else {
+                    throw new Error(data.message || 'Gagal melakukan test print');
+                }
+            } catch (error) {
+                console.error('Error test print:', error);
+                showAlert('❌ Gagal test print: ' + error.message, 'error');
+            } finally {
+                // Re-enable button
+                testBtn.disabled = !currentPrinter;
+                testBtn.textContent = '🖨️ Test Print';
+            }
+        }
+
+        // Fungsi untuk save store settings
+        async function saveStoreSettings() {
+            const storeName = document.getElementById('storeName').value.trim();
+            const storeAddress = document.getElementById('storeAddress').value.trim();
+            const storePhone = document.getElementById('storePhone').value.trim();
+            const storeFooter = document.getElementById('storeFooter').value.trim();
+            const paperSize = document.getElementById('paperSize').value;
+
+            if (!storeName || !storeAddress) {
+                showAlert('Nama toko dan alamat harus diisi', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/settings/store', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        store_name: storeName,
+                        store_address: storeAddress,
+                        store_phone: storePhone,
+                        store_footer: storeFooter,
+                        paper_size: paperSize
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    showAlert('✅ Pengaturan toko berhasil disimpan!', 'success');
+                } else {
+                    const errorMsg = data.errors ? data.errors.join(', ') : data.message;
+                    throw new Error(errorMsg);
+                }
+            } catch (error) {
+                console.error('Error saving store settings:', error);
+                showAlert('❌ Gagal menyimpan: ' + error.message, 'error');
+            }
+        }
+
+        // Fungsi untuk backup settings
+        async function backupSettings() {
+            try {
+                const response = await fetch('/settings/backup');
+                const data = await response.json();
+
+                // Download as file
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                a.href = url;
+                a.download = `printer-settings-backup-${timestamp}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showAlert('✅ Backup berhasil diunduh!', 'success');
+            } catch (error) {
+                console.error('Error backup settings:', error);
+                showAlert('❌ Gagal backup: ' + error.message, 'error');
+            }
+        }
+
+        // Fungsi untuk restore settings
+        async function restoreSettings() {
+            document.getElementById('restoreFileInput').click();
+        }
+
+        // Handle file upload untuk restore
+        document.getElementById('restoreFileInput').addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+
+                const response = await fetch('/settings/restore', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showAlert('✅ Settings berhasil di-restore!', 'success');
+                    await loadStoreSettings();
+                    await loadPrinterStatus();
+                } else {
+                    const errorMsg = result.errors ? result.errors.join(', ') : result.message;
+                    throw new Error(errorMsg);
+                }
+            } catch (error) {
+                console.error('Error restore settings:', error);
+                showAlert('❌ Gagal restore: ' + error.message, 'error');
+            }
+
+            // Reset file input
+            event.target.value = '';
+        });
+
+        // Event listeners
+        document.getElementById('setPrinterBtn').addEventListener('click', setPrinter);
+        document.getElementById('refreshBtn').addEventListener('click', loadPrinterStatus);
+        document.getElementById('testPrintBtn').addEventListener('click', testPrint);
+        document.getElementById('saveStoreBtn').addEventListener('click', saveStoreSettings);
+        document.getElementById('backupBtn').addEventListener('click', backupSettings);
+        document.getElementById('restoreBtn').addEventListener('click', restoreSettings);
+
+        // Load status saat halaman dibuka
+        loadPrinterStatus();
+        loadStoreSettings();
+
+        // Auto refresh setiap 30 detik
+        setInterval(loadPrinterStatus, 30000);
+    </script>
+</body>
+</html>
