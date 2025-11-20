@@ -29,8 +29,8 @@ jobs:
           PKG_CACHE_PATH: "${{ runner.temp }}\\pkg-cache"
         run: |
           echo Using PKG_CACHE_PATH=$env:PKG_CACHE_PATH
-          npx --yes @vercel/pkg-fetch@3.6.0 node18-win-x64
-          npx --yes @vercel/pkg-fetch@3.6.0 node18-win-arm64
+          npx --yes pkg-fetch@latest node18-win-x64
+          npx --yes pkg-fetch@latest node18-win-arm64
 
       - name: Build exe with local pkg
         shell: pwsh

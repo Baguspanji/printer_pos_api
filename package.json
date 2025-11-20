@@ -35,6 +35,6 @@
     "node-printer": "^1.0.4"
   },
   "devDependencies": {
-    "pkg": "5.8.1"
+    "pkg": "^5.8.1"
   }
 }
