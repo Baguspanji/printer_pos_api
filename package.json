@@ -7,6 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "build-native": "node-gyp configure build",
+    "build-native-clean": "node-gyp clean",
     "build-win": "pkg . --targets node18-win-x64,node18-win-arm64 --out-dir dist/windows",
     "build-mac": "pkg . --targets node18-macos-x64,node18-macos-arm64 --out-dir dist/macos",
     "build": "npm run build-win && npm run build-mac"
@@ -34,9 +36,12 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "winrawprinter": "^1.0.3"
+    "winrawprinter": "^1.0.0"
   },
   "devDependencies": {
-    "@yao-pkg/pkg": "^5.15.0"
+    "@yao-pkg/pkg": "^5.15.0",
+    "node-gyp": "^10.0.1",
+    "nan": "^2.18.0",
+    "windows-build-tools": "^5.4.0"
   }
 }
