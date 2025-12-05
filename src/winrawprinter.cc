@@ -1,13 +1,22 @@
 #include <nan.h>
-#include <windows.h>
-#include <winspool.h>
 #include <stdio.h>
+#include <string.h>
 
-#pragma comment(lib, "winspool.lib")
-#pragma comment(lib, "ole32.lib")
-#pragma comment(lib, "oleaut32.lib")
+#ifdef _WIN32
+  #include <windows.h>
+  #include <winspool.h>
+  #pragma comment(lib, "winspool.lib")
+  #pragma comment(lib, "ole32.lib")
+  #pragma comment(lib, "oleaut32.lib")
+#endif
 
-// Function to send data to raw printer
+#ifdef __APPLE__
+  #include <IOKit/IOKitLib.h>
+  #include <IOKit/usb/IOUSBLib.h>
+  #include <IOKit/serial/IOSerialKeys.h>
+#endif
+
+// Function to send data to raw printer (Windows only)
 NAN_METHOD(SendToPrinter) {
     if (info.Length() < 2) {
         return Nan::ThrowTypeError("Wrong number of arguments");
@@ -17,6 +26,7 @@ NAN_METHOD(SendToPrinter) {
         return Nan::ThrowTypeError("Arguments must be strings");
     }
 
+#ifdef _WIN32
     v8::String::Utf8Value printerName(info.GetIsolate(), info[0]);
     v8::String::Utf8Value data(info.GetIsolate(), info[1]);
 
@@ -45,6 +55,9 @@ NAN_METHOD(SendToPrinter) {
     delete[] wPrinterName;
 
     info.GetReturnValue().Set(Nan::New<v8::Number>(dwBytesWritten));
+#else
+    return Nan::ThrowError("sendToPrinter is only available on Windows");
+#endif
 }
 
 // Function to list available printers
@@ -53,6 +66,7 @@ NAN_METHOD(GetPrinters) {
     v8::Local<v8::Array> printerArray = Nan::New<v8::Array>();
     int index = 0;
 
+#ifdef _WIN32
     PRINTER_INFO_4W* pPrinterEnum = NULL;
     DWORD cbBuf = 0;
     DWORD cPrinters = 0;
@@ -73,6 +87,7 @@ NAN_METHOD(GetPrinters) {
         }
         free(pPrinterEnum);
     }
+#endif
 
     info.GetReturnValue().Set(printerArray);
 }

@@ -35,13 +35,14 @@
   "type": "commonjs",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "winrawprinter": "^1.0.0"
+    "express": "^5.1.0"
   },
   "devDependencies": {
     "@yao-pkg/pkg": "^5.15.0",
     "node-gyp": "^10.0.1",
-    "nan": "^2.18.0",
-    "windows-build-tools": "^5.4.0"
+    "nan": "^2.18.0"
+  },
+  "optionalDependencies": {
+    "winrawprinter": "^1.0.0"
   }
 }

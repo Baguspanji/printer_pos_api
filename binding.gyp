@@ -2,16 +2,18 @@
   "targets": [
     {
       "target_name": "winrawprinter",
-      "sources": [],
+      "sources": ["src/winrawprinter.cc"],
+      "include_dirs": [
+        "<!(node -e \"require('nan')\")"
+      ],
       "conditions": [
         ["OS=='win'", {
-          "sources": [
-            "src/winrawprinter.cc"
-          ],
-          "include_dirs": [
-            "<!(node -e \"require('nan')\")"
-          ],
           "msbuild_toolset": "v143"
+        }],
+        ["OS=='mac'", {
+          "xcode_settings": {
+            "GCC_ENABLE_CPP_EXCEPTIONS": "YES"
+          }
         }]
       ]
     }

@@ -426,6 +426,16 @@
     "xcode_version": "16.0",
     "nodedir": "/Users/baguspanji/Library/Caches/node-gyp/20.19.2",
     "python": "/Library/Developer/CommandLineTools/usr/bin/python3",
-    "standalone_static_library": 1
+    "standalone_static_library": 1,
+    "global_prefix": "/Users/baguspanji/.nvm/versions/node/v20.19.2",
+    "local_prefix": "/Users/baguspanji/Workspace/javascript_app/printer_pos",
+    "globalconfig": "/Users/baguspanji/.nvm/versions/node/v20.19.2/etc/npmrc",
+    "userconfig": "/Users/baguspanji/.npmrc",
+    "init_module": "/Users/baguspanji/.npm-init.js",
+    "npm_version": "11.6.3",
+    "node_gyp": "/Users/baguspanji/.nvm/versions/node/v20.19.2/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
+    "cache": "/Users/baguspanji/.npm",
+    "user_agent": "npm/11.6.3 node/v20.19.2 darwin arm64 workspaces/false",
+    "prefix": "/Users/baguspanji/.nvm/versions/node/v20.19.2"
   }
 }
