@@ -17,9 +17,7 @@
   "pkg": {
     "scripts": "index.js",
     "assets": [
-      "views/**/*",
-      "node_modules/node-printer/printer.js",
-      "node_modules/node-printer/job.js"
+      "views/**/*"
     ],
     "targets": [
       "node18-win-x64",
@@ -36,7 +34,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "node-printer": "^1.0.4"
+    "winrawprinter": "^1.0.3"
   },
   "devDependencies": {
     "@yao-pkg/pkg": "^5.15.0"
